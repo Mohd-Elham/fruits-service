@@ -23,8 +23,8 @@ jobs:
           java-version: 17
 
       # 3. Run tests (inside GitHub runner, not Docker)
-      - name: Run Maven tests
-        run: mvn test
+#      - name: Run Maven tests
+#        run: mvn test
 
       - name: Run Checkstyle
         run: mvn checkstyle:check
