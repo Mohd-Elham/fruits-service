@@ -1,0 +1,48 @@
+---
+# 5.1) Service for Fruit Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fruits-service      # matches your gateway route lb://fruits-service
+spec:
+  selector:
+    app: fruits-service
+  ports:
+    - name: http
+      port: 8081                 # your service’s port
+      targetPort: 8081
+  type: ClusterIP
+---
+# 5.2) Deployment for Fruit Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fruits-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fruits-service
+  template:
+    metadata:
+      labels:
+        app: fruits-service
+    spec:
+      containers:
+        - name: fruits-service
+          image: elu107/fruits-service:latest   # the image tag you built
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 5
